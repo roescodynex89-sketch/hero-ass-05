@@ -12,7 +12,7 @@ loginBtn.addEventListener("click", function () {
   if (username === defaultUsername && password === defaultPassword) {
     // ok>then
     alert("Login Successful");
-    // er por porer index jete dibo
+    // er por porer main entry
     window.location.href = "main.html";
   } else {
     alert("Incorrect username or password");

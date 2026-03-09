@@ -1,6 +1,6 @@
 // id dhori
-const container = document.getElementById("issues-container");
-const issueCount = document.getElementById("issue-count");
+const issuesContainer = document.getElementById("issues-container");
+const issueCountTotal = document.getElementById("issue-count");
 const loading = document.getElementById("loading");
 const emptyState = document.getElementById("empty-state");
 
@@ -9,7 +9,8 @@ const openBtn = document.getElementById("open-btn");
 const closedBtn = document.getElementById("closed-btn");
 
 let allIssues = [];
-// load
+
+// load>api
 async function loadIssues() {
   loading.classList.remove("hidden");
 
@@ -27,30 +28,30 @@ async function loadIssues() {
 loadIssues();
 
 function displayIssues(issues) {
-  container.innerHTML = "";
+  issuesContainer.innerHTML = "";
 
   loading.classList.add("hidden");
 
   if (issues.length === 0) {
     emptyState.classList.remove("hidden");
 
-    container.classList.add("hidden");
+    issuesContainer.classList.add("hidden");
 
     return;
   }
 
   emptyState.classList.add("hidden");
-  container.classList.remove("hidden");
-  container.classList.add("grid");
+  issuesContainer.classList.remove("hidden");
+  issuesContainer.classList.add("grid");
 
-  issueCount.innerText = issues.length;
+  issueCountTotal.innerText = issues.length;
   // card edit
   issues.forEach((issue) => {
     const card = document.createElement("div");
     card.className =
       "bg-white rounded-xl p-5 shadow hover:shadow-lg transition cursor-pointer";
 
-    // priority condtn
+    // priority condition
     if (issue.status === "open") {
       card.style.borderTop = "4px solid #22c55e";
       card.style.borderBottom = "2px solid #F3F4F6 ";
@@ -60,10 +61,15 @@ function displayIssues(issues) {
     }
 
     //icon set
+    //  const statusIcon =
+    //     issue.status === "open"
+    //       ? `<img src="assets/Closed- Status .png" class="w-7 h-7"/>`
+    //       : ` <img src="assets/Open-Status.png" class="w-7 h-7"/>`;
+
     const statusIcon =
-      issue.priority.toLowerCase() === "low"
-        ? `<img src="assets/Closed- Status .png" class="w-7 h-7"/>`
-        : ` <img src="assets/Open-Status.png" class="w-7 h-7"/>`;
+      issue.status === "open"
+        ? ` <img src="assets/Open-Status.png" class="w-7 h-7"/>`
+        : `<img src="assets/Closed- Status .png" class="w-7 h-7"/>`;
 
     // style
     const priorityClass =
@@ -81,6 +87,7 @@ function displayIssues(issues) {
         <span class="text-xs border border-red-200 text-red-500 px-3 py-1 rounded-full">HELP WANTED</span>
 
        `;
+
     const date = new Date(issue.createdAt).toLocaleDateString("en-US", {
       month: "numeric",
       day: "numeric",
@@ -95,13 +102,12 @@ function displayIssues(issues) {
       </span>
     </div>
 
-    <h3 class="font-bold text-sm text-gray-900 mb-2"
-      style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">
+    <h3 class="font-bold text-sm text-gray-900 mb-2">
       ${issue.title}
     </h3>
 
     <p class="text-xs text-gray-400 mb-4 leading-relaxed"
-      style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">
+    style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">
       ${issue.description}
     </p>
 
@@ -114,10 +120,11 @@ function displayIssues(issues) {
     `;
 
     card.addEventListener("click", () => openModal(issue));
-    container.appendChild(card);
+    issuesContainer.appendChild(card);
   });
 }
 
+// button
 function setActiveTab(btn) {
   allBtn.classList.remove("bg-blue-600", "text-white");
   openBtn.classList.remove("bg-blue-600", "text-white");
@@ -173,7 +180,8 @@ function openModal(issue) {
   document.getElementById("modal-date").innerText = new Date(
     issue.createdAt,
   ).toLocaleDateString();
-  document.getElementById("modal-assignee").innerText = issue.assignee;
+  document.getElementById("modal-assignee").innerText =
+    issue.assignee || "Not assignee";
 
   const priorityEl = document.getElementById("modal-priority");
   const priority = issue.priority ? issue.priority.toLowerCase() : "";
